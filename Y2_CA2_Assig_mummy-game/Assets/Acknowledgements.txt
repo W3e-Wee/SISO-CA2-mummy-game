@@ -1,1 +1,6 @@
 ================= Put sources here =====================
+Mobs Link:
+https://assetstore.unity.com/packages/3d/characters/creatures/fantastic-creature-1-103074
+
+Mummy Model Link:
+https://assetstore.unity.com/packages/3d/characters/humanoids/fantasy/mummy-warriors-46190
