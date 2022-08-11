@@ -15,7 +15,7 @@ public class LeverControl : MonoBehaviour
     private void FixedUpdate()
     {
         float distance = Vector3.Distance(activatePoint.position, leaver.position);
-        Debug.Log(!isActivated + " " + distance);
+        // Debug.Log(!isActivated + " " + distance);
 
         if (distance < threshold && !isActivated)
         {
