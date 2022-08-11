@@ -28,6 +28,10 @@ public class SlimeJelly : MonoBehaviour
 
     private Vector3[] vertexArray;
 
+    public TestAICoding _test;
+    public bool isDead = false;
+    public bool Icalled = false;
+
     // Start is called before the first frame update
 
     void Start()
@@ -59,9 +63,25 @@ public class SlimeJelly : MonoBehaviour
 
 
     // Update is called once per frame
+    void Update()
+    {
+        if (isDead == true)
+        {
+            if(Icalled == false)
+            {
+                Icalled = true;
+                _test.test = this.transform;
+                _test.callTest = true;
+                _test._state = TestAICoding.STATE.checking;
+            }
+        }
+        else 
+        {
+            Icalled = false;
+        }
+    }
 
     void FixedUpdate()
-
     {
 
         vertexArray = OriginalMesh.vertices;
