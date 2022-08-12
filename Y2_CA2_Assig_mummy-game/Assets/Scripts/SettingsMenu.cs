@@ -19,5 +19,17 @@ public class SettingsMenu : MonoBehaviour
         Debug.Log("Current Volume: " + masterVolume);
         audioMixer.SetFloat("Master_volume", masterVolume);
     }
+
+    public void SetMusicVolume(float musicVolume)
+    {
+        Debug.Log("Current Volume: " + musicVolume);
+        audioMixer.SetFloat("Music_volume", musicVolume);
+    }
+
+    public void SetSFXVolume(float sfxVolume)
+    {
+        Debug.Log("Current Volume: " + sfxVolume);
+        audioMixer.SetFloat("SFX_volume", sfxVolume);
+    }
     #endregion
 }
