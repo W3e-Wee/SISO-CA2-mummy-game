@@ -26,6 +26,8 @@ public class TestAICoding : MonoBehaviour
     public GameObject[] slimes;
     public float idleTimer;
     public float notice_range;
+    public float attack_range;
+    public float ani_CD;
     public float slimeId;
     public int randomNumber;
 
@@ -89,11 +91,11 @@ public class TestAICoding : MonoBehaviour
             if (Vector3.Distance(transform.position, Target.position) < notice_range)
             {
                 _nav.SetDestination(Target.position);
-                // if (Vector3.Distance(transform.position, Target.position) < attack_range)
-                // {
-                    // _state = STATE.attack;
-                    // _ani.SetTrigger("isAttacking");
-                // }
+                if (Vector3.Distance(transform.position, Target.position) < attack_range)
+                {
+                    _state = STATE.attacking;
+                    _ani.SetTrigger("isAttacking");
+                }
             }
             else
             {
@@ -125,8 +127,31 @@ public class TestAICoding : MonoBehaviour
 
             }
         }
-        // _nav.SetDestination(Target.position);
-        // Debug.Log(_state);
-        // _ani.SetFloat("Speed", _nav.velocity.magnitude);
+
+        else if(_state == STATE.attacking)
+		{
+            Quaternion targetRotation = Quaternion.LookRotation (Target.position - transform.position);
+            this.transform.rotation = targetRotation;
+            // this.transform.rotation = Quaternion.Lerp (transform.rotation, targetRotation);
+            _nav.isStopped = true;
+
+            ani_CD -= Time.deltaTime;
+            if (ani_CD <= 0)
+            {
+                _ani.SetTrigger("isAttacking");
+                ani_CD = 0.9f;
+            }
+			// It is attacking during this state
+			// Check if it is outside of the attack range
+			if(Vector3.Distance(transform.position, Target.position) > attack_range)
+			{
+				// target is outside, change back to chase state
+				_state = STATE.chasing;
+                _nav.isStopped = false;
+				// _ani.SetTrigger("isNotAttacking");
+			}
+		}
+
+        _ani.SetFloat("Speed", _nav.velocity.magnitude);
     }
 }

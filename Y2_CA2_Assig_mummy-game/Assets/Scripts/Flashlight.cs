@@ -14,16 +14,12 @@ public class Flashlight : MonoBehaviour
     #region Public Variables
     public Light _spotLightSource;
 
-    [Header("RayCasy Settings")]
-    public int _range;
+    // [Header("RayCasy Settings")]
+    // public int _range;
 
     public Camera vrCam;
     #endregion
 
-    void Update()
-    {
-        
-    }
 
     #region Public Methods
     public void LightKillRay() // changes light color & angle along with some other things
@@ -32,7 +28,7 @@ public class Flashlight : MonoBehaviour
         _spotLightSource.color = Color.cyan;
         _spotLightSource.intensity = 2;
         // Calls a function
-        Kill();
+        // Kill();
     }
 
     public void LightDefault() // returns light angle and color to default state
@@ -43,17 +39,17 @@ public class Flashlight : MonoBehaviour
     }
     #endregion
 
-    #region Private Variables
-    private void Kill() // Raycast to get enemy info 
-    {
-        // Create a raycast
-        RaycastHit hit;
+    // #region Private Variables
+    // private void Kill() // Raycast to get enemy info 
+    // {
+    //     // Create a raycast
+    //     RaycastHit hit;
 
-        if (Physics.Raycast(vrCam.transform.position, vrCam.transform.forward, out hit, _range)) // Send raycast forward from position of vrCam
-        {
-            // if raycast hit something
-            Debug.Log(hit.transform.name); // Get name of collided target
-        }
-    }
-    #endregion
+    //     if (Physics.Raycast(vrCam.transform.position, vrCam.transform.forward, out hit, _range)) // Send raycast forward from position of vrCam
+    //     {
+    //         // if raycast hit something
+    //         Debug.Log(hit.transform.name); // Get name of collided target
+    //     }
+    // }
+    // #endregion
 }
