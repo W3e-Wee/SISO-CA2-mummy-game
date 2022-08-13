@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 public class PlayerHP : MonoBehaviour
 {
     // public Image playerHealthBar;
+    public Canvas playerHealthCanvas;
+    public Canvas gameOverCanvas;
     public float health;
     public float maxHealth = 100;
     public Image[] hearts;
@@ -18,6 +20,9 @@ public class PlayerHP : MonoBehaviour
     private void Start()
     {
         health = maxHealth;
+        playerHealthCanvas = GameObject.Find("PlayerHealthCanvas").GetComponent<Canvas>();
+        gameOverCanvas = GameObject.Find("GameOverCanvas").GetComponent<Canvas>();
+        gameOverCanvas.enabled = false;
     }
 
 
@@ -28,6 +33,16 @@ public class PlayerHP : MonoBehaviour
         if (health > maxHealth) health = maxHealth;
         lerpSpeed = 3f * Time.deltaTime;
         HealthBarFiller();
+
+        if (health <= 0)
+        {
+            gameOverCanvas.enabled = true;
+            playerHealthCanvas.enabled = false;
+            Time.timeScale = 0;
+            new WaitForSeconds(5000);
+            Time.timeScale = 1;
+            SceneManager.LoadScene("Menu");
+        }
     }
 
     void HealthBarFiller()

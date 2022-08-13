@@ -29,6 +29,7 @@ public class mummyPathing : MonoBehaviour
     public float notice_range;
     public float attack_range;
     public float ani_CD;
+    public int attack_damage;
     public float stunTimer;
     public float slimeId;
     public float playerDistance;
@@ -43,14 +44,13 @@ public class mummyPathing : MonoBehaviour
         _ani = GetComponent<Animator>();
         _nav = GetComponent<UnityEngine.AI.NavMeshAgent>();
 
-        
+
         return;
     }
 
-    public void DamageEvent(int dmgTaken)
+    public void DamageEvent()
     {
-        Debug.Log(dmgTaken);
-        PlayerHP.Damage(dmgTaken);
+        PlayerHP.Damage(attack_damage);
     }
 
 
