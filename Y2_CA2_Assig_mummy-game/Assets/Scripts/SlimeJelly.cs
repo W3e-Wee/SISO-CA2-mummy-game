@@ -31,13 +31,16 @@ public class SlimeJelly : MonoBehaviour
     public TestAICoding _test;
     public bool isDead = false;
     public bool Icalled = false;
+    public float health = 800;
+
+    public ParticleSystem deathParticles;
 
     // Start is called before the first frame update
 
     void Start()
 
     {
-
+    
         OriginalMesh = GetComponent<MeshFilter>().sharedMesh;
 
         MeshClone = Instantiate(OriginalMesh);
@@ -56,14 +59,11 @@ public class SlimeJelly : MonoBehaviour
 
         }
 
-
+        deathParticles = transform.GetChild(0).GetComponentInChildren<ParticleSystem>();
 
     }
 
-
-
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (isDead == true)
         {
@@ -79,10 +79,6 @@ public class SlimeJelly : MonoBehaviour
         {
             Icalled = false;
         }
-    }
-
-    void FixedUpdate()
-    {
 
         vertexArray = OriginalMesh.vertices;
 

@@ -28,6 +28,7 @@ public class TestAICoding : MonoBehaviour
     public float notice_range;
     public float attack_range;
     public float ani_CD;
+    public float stunTimer;
     public float slimeId;
     public int randomNumber;
 
@@ -151,6 +152,17 @@ public class TestAICoding : MonoBehaviour
 				// _ani.SetTrigger("isNotAttacking");
 			}
 		}
+        else if(_state == STATE.stunned) {
+            _nav.isStopped = true;
+            _ani.SetTrigger("isStunned");
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0)
+            {
+                _ani.SetTrigger("isStunned");
+                _state = STATE.idle;
+                stunTimer = 5f;
+            }
+        }
 
         _ani.SetFloat("Speed", _nav.velocity.magnitude);
     }
