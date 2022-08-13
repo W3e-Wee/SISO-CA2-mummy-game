@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.UI;
 
 //---------------------------------------------------------------------------------
 // Author		: Wee Heng
@@ -37,6 +38,11 @@ public class Flashlight : MonoBehaviour
                 // Debug.Log(hit.transform.tag); // Get name of collided target
                 if (hit.transform.tag == "slime") {
                     ParticleSystem ps = hit.transform.gameObject.GetComponent<SlimeJelly>().deathParticles;
+
+                    Image _HealthBar = hit.transform.gameObject.GetComponent<SlimeJelly>().healthBar;
+                    if (_HealthBar.enabled == false) {
+                        _HealthBar.enabled = true;
+                    }
                     var dmg = ps.emission;
 
                     var currentSlime = hit.transform.gameObject;
@@ -49,10 +55,13 @@ public class Flashlight : MonoBehaviour
                     if (hit.transform.gameObject.GetComponent<SlimeJelly>().health == 0) {
                         hit.transform.gameObject.GetComponent<SlimeJelly>().isDead = true;
                         dmg.enabled = false;
+                        if (_HealthBar.enabled == true) {
+                            _HealthBar.enabled = false;
+                        }
                     }
                 }
                 if (hit.transform.tag == "mummy") {
-                    hit.transform.GetComponent<TestAICoding>()._state = TestAICoding.STATE.stunned;
+                    hit.transform.GetComponent<mummyPathing>()._state = mummyPathing.STATE.stunned;
                 }
             }
         }

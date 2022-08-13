@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public class TestAICoding : MonoBehaviour
+public class mummyPathing : MonoBehaviour
 {
     public Transform Target;
-    private Animator _ani;
-    private UnityEngine.AI.NavMeshAgent _nav;
+    public PlayerHP PlayerHP;
+    public Animator _ani;
+    public UnityEngine.AI.NavMeshAgent _nav;
     public Transform test;
     public bool callTest = false; 
 
@@ -30,6 +31,7 @@ public class TestAICoding : MonoBehaviour
     public float ani_CD;
     public float stunTimer;
     public float slimeId;
+    public float playerDistance;
     public int randomNumber;
 
 
@@ -41,12 +43,23 @@ public class TestAICoding : MonoBehaviour
         _ani = GetComponent<Animator>();
         _nav = GetComponent<UnityEngine.AI.NavMeshAgent>();
 
+        
         return;
     }
 
+    public void DamageEvent(int dmgTaken)
+    {
+        Debug.Log(dmgTaken);
+        PlayerHP.Damage(dmgTaken);
+    }
+
+
+
     void Update()
     {
+
         Vector3 _dir = Target.position - transform.position;
+        playerDistance = Vector3.Distance(transform.position, Target.position);
         Debug.DrawRay(transform.position, _dir, Color.red);
         if (_state == STATE.idle)
         {   
@@ -96,6 +109,7 @@ public class TestAICoding : MonoBehaviour
                 {
                     _state = STATE.attacking;
                     _ani.SetTrigger("isAttacking");
+                    // PlayerHP.Damage(10);
                 }
             }
             else
@@ -107,40 +121,38 @@ public class TestAICoding : MonoBehaviour
         {
             _nav.SetDestination(test.position);
             callTest = false;
-
+            // Debug.Log(Vector3.Distance(this.transform.position, test.position) < 2f);
+            // Debug.Log("Does Mummy see player? ");
+            // Debug.Log(Vector3.Distance(transform.position, Target.position) < notice_range);
             if (Vector3.Distance(transform.position, Target.position) < notice_range)
             {
                 RaycastHit _hit;
+                // Debug.Log(Physics.Raycast(transform.position, _dir, out _hit));
                 if (Physics.Raycast(transform.position, _dir, out _hit))
                 {
+                    Debug.Log(_hit.transform.name);
                     if (_hit.transform == Target)
                     {
                         _state = STATE.chasing;
                     }
                 }
             }
-            else if (Vector3.Distance(this.transform.position, test.position) < 0.5f)
+            else if (Vector3.Distance(this.transform.position, test.position) < 2f)
             {
                 _state = STATE.idle;
-            }
-            else {
-                _state = STATE.checking;
-
             }
         }
 
         else if(_state == STATE.attacking)
 		{
-            Quaternion targetRotation = Quaternion.LookRotation (Target.position - transform.position);
-            this.transform.rotation = targetRotation;
-            // this.transform.rotation = Quaternion.Lerp (transform.rotation, targetRotation);
+            this.transform.LookAt(Target);
             _nav.isStopped = true;
 
             ani_CD -= Time.deltaTime;
             if (ani_CD <= 0)
             {
                 _ani.SetTrigger("isAttacking");
-                ani_CD = 0.9f;
+                ani_CD = 1.2f;
             }
 			// It is attacking during this state
 			// Check if it is outside of the attack range
@@ -149,7 +161,6 @@ public class TestAICoding : MonoBehaviour
 				// target is outside, change back to chase state
 				_state = STATE.chasing;
                 _nav.isStopped = false;
-				// _ani.SetTrigger("isNotAttacking");
 			}
 		}
         else if(_state == STATE.stunned) {
