@@ -1,16 +1,19 @@
 using System.Collections;
-
 using System.Collections.Generic;
-
 using UnityEngine;
-
 using UnityEngine.UI;
 
-
+//---------------------------------------------------------------------------------
+// Author		: Clarence Loh
+// Date  		: 2022-08-09
+// Modified By	: Clarence
+// Modified Date: 2022-08-09
+// Description	: Script to handle Slime Events
+//---------------------------------------------------------------------------------
 public class SlimeJelly : MonoBehaviour
-
 {
-
+    [Header("Slime Jiggle Settings")]
+    // Slime Jiggle
     public float Intensity = 1f;
     public float Mass = 1f;
     public float stiffness = 1f;
@@ -20,10 +23,12 @@ public class SlimeJelly : MonoBehaviour
     private JellyVertex[] jv;
     private Vector3[] vertexArray;
 
+    [Header("Mummy File Settings")]
     public mummyPathing mummyPathing;
     public bool isDead = false;
     public bool Icalled = false;
 
+    [Header("Slime health Settings")]
     public float respawnTimer = 50f;
     public float callTimerCd = 0f;
     public Image healthBar;
@@ -39,6 +44,7 @@ public class SlimeJelly : MonoBehaviour
 
     void Start()
     {
+        // Jiggle Assignments
         OriginalMesh = GetComponent<MeshFilter>().sharedMesh;
         MeshClone = Instantiate(OriginalMesh);
         GetComponent<MeshFilter>().sharedMesh = MeshClone;
@@ -48,9 +54,11 @@ public class SlimeJelly : MonoBehaviour
         {
             jv[i] = new JellyVertex(i, transform.TransformPoint(MeshClone.vertices[i]));
         }
+
+        // Mummy Assignments
         mummyPathing = GameObject.Find("mummy_mob").GetComponent<mummyPathing>();
 
-        // chaseSound = this.transform.GetChild(0).GetComponent<AudioSource>();
+        // SLime Assignments
         _slimeDeath = this.transform.GetChild(2).GetComponent<AudioSource>();
         _slimeHit = this.transform.GetChild(3).GetComponent<AudioSource>();
         healthBar = this.transform.GetChild(0).GetChild(0).GetComponent<Image>();
@@ -60,19 +68,26 @@ public class SlimeJelly : MonoBehaviour
         
     }
 
+    // This is played in the Animations
     public void deathSoundPlay() {
         _slimeDeath.Play();
     }
+
     void Update()
     {
+        // get the dmg particle
         var dmg = deathParticles.emission;
+
+        // control health bar speed
         lerpSpeed = 3f * Time.deltaTime;
 
+        // play a looping sound of slime getting hit
         if (takingDamage == true && damageAudioPlayed == true){
             Debug.Log("Damage sound playing");
             _slimeHit.Play();
             damageAudioPlayed = false;
         }
+        // stops the looping sound
         else if (takingDamage == false && damageAudioPlayed == false)
         {
             Debug.Log("Damage sound Stoped playing");
@@ -80,11 +95,13 @@ public class SlimeJelly : MonoBehaviour
             damageAudioPlayed = false;
         }
 
+        // decrease the cooldown of the call timer to call mummy
         if (callTimerCd > 0)
         {
             callTimerCd -= Time.deltaTime;
         }
         
+        // if full health hide healthbar
         if (health == maxHealth) {
             takingDamage = false;
             damageAudioPlayed = true;
@@ -94,12 +111,15 @@ public class SlimeJelly : MonoBehaviour
                 healthBar.enabled = false;
             }
             // Debug.Log("Slime is healthy");
+
+            // if damaged show healthbar
         } else if (health < maxHealth && health > 0) {
             healthBar.enabled = true;
             takingDamage = true;
             // Debug.Log("Slime is hurt");
             dmg.enabled = true;
         }
+        // if health is zero hide healthbar
         else if (health == 0) {
             // Debug.Log("Slime is Dead");
             _SlimeAni.SetTrigger("isDie");
@@ -111,6 +131,8 @@ public class SlimeJelly : MonoBehaviour
             }
 
         }
+
+        // when the slime dies.
         if (isDead == true)
         {
             if (respawnTimer > 0)
@@ -128,6 +150,7 @@ public class SlimeJelly : MonoBehaviour
         }
         else 
         {
+            // This happens when the slime revives as respawn timer hits 0
             _SlimeAni.ResetTrigger("isRevive");
             if (callTimerCd <= 0)
             {
@@ -135,7 +158,7 @@ public class SlimeJelly : MonoBehaviour
                 if (Icalled == true && isDead == false)
                 {
                     // Debug.Log("Called the big boss!");
-                    mummyPathing.test = this.transform;
+                    mummyPathing.slimeLocation = this.transform;
                     mummyPathing.callTest = true;
                     mummyPathing._state = mummyPathing.STATE.checking;
                     Icalled = false;
@@ -147,11 +170,13 @@ public class SlimeJelly : MonoBehaviour
         }
     }
 
+    // Affect the health bar of the slime
     void HealthBarChange()
     {
         // Debug.Log("HealthBarChange");
         healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, health / maxHealth, lerpSpeed);
     } 
+    // Affect the health bar of the slime
     void ColorChange()
     {
         // Debug.Log("ColorChange");
@@ -160,6 +185,7 @@ public class SlimeJelly : MonoBehaviour
         healthBar.color = healthColor;
     }
    
+   // code to make jelly jiggle on movement
     void FixedUpdate()
     {
         vertexArray = OriginalMesh.vertices;
@@ -177,6 +203,7 @@ public class SlimeJelly : MonoBehaviour
 
     }
 
+    // code to make jelly jiggle on movement
     public class JellyVertex
     {
         public int ID;
