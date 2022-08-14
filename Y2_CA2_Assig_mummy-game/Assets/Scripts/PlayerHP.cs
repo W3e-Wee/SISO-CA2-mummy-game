@@ -21,8 +21,8 @@ public class PlayerHP : MonoBehaviour
     {
         health = maxHealth;
         playerHealthCanvas = GameObject.Find("PlayerHealthCanvas").GetComponent<Canvas>();
-        gameOverCanvas = GameObject.Find("GameOverCanvas").GetComponent<Canvas>();
-        gameOverCanvas.enabled = false;
+        // gameOverCanvas = GameObject.Find("GameOverCanvas").GetComponent<Canvas>();
+        // gameOverCanvas.enabled = false;
     }
 
 
@@ -39,7 +39,7 @@ public class PlayerHP : MonoBehaviour
             gameOverCanvas.enabled = true;
             playerHealthCanvas.enabled = false;
             Time.timeScale = 0;
-            new WaitForSeconds(5000);
+            new WaitForSeconds(5f);
             Time.timeScale = 1;
             SceneManager.LoadScene("Menu");
         }
