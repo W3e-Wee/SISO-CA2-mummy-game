@@ -31,7 +31,10 @@ public class SlimeJelly : MonoBehaviour
     float lerpSpeed;
     public ParticleSystem deathParticles;
     public Animator _SlimeAni;
-
+    public AudioSource _slimeHit;
+    public AudioSource _slimeDeath;
+    public bool damageAudioPlayed = true;
+    public bool takingDamage = false;
     // Start is called before the first frame update
 
     void Start()
@@ -45,22 +48,71 @@ public class SlimeJelly : MonoBehaviour
         {
             jv[i] = new JellyVertex(i, transform.TransformPoint(MeshClone.vertices[i]));
         }
-        deathParticles = transform.GetChild(1).GetComponentInChildren<ParticleSystem>();
         mummyPathing = GameObject.Find("mummy_mob").GetComponent<mummyPathing>();
+
+        // chaseSound = this.transform.GetChild(0).GetComponent<AudioSource>();
+        _slimeDeath = this.transform.GetChild(2).GetComponent<AudioSource>();
+        _slimeHit = this.transform.GetChild(3).GetComponent<AudioSource>();
+        healthBar = this.transform.GetChild(0).GetChild(0).GetComponent<Image>();
+        deathParticles = this.transform.GetChild(1).GetComponent<ParticleSystem>();
+        _SlimeAni = GetComponent<Animator>();
+        damageAudioPlayed = true;
+        
     }
 
+    public void deathSoundPlay() {
+        _slimeDeath.Play();
+    }
     void Update()
     {
+        var dmg = deathParticles.emission;
         lerpSpeed = 3f * Time.deltaTime;
+
+        if (takingDamage == true && damageAudioPlayed == true){
+            Debug.Log("Damage sound playing");
+            _slimeHit.Play();
+            damageAudioPlayed = false;
+        }
+        else if (takingDamage == false && damageAudioPlayed == false)
+        {
+            Debug.Log("Damage sound Stoped playing");
+            _slimeHit.Stop();
+            damageAudioPlayed = false;
+        }
+
         if (callTimerCd > 0)
         {
             callTimerCd -= Time.deltaTime;
         }
         
+        if (health == maxHealth) {
+            takingDamage = false;
+            damageAudioPlayed = true;
+            dmg.enabled = false;
+            if (healthBar.enabled == true)
+            {
+                healthBar.enabled = false;
+            }
+            // Debug.Log("Slime is healthy");
+        } else if (health < maxHealth && health > 0) {
+            healthBar.enabled = true;
+            takingDamage = true;
+            // Debug.Log("Slime is hurt");
+            dmg.enabled = true;
+        }
+        else if (health == 0) {
+            // Debug.Log("Slime is Dead");
+            _SlimeAni.SetTrigger("isDie");
+            isDead = true;
+            dmg.enabled = false;
+            takingDamage = false;
+            if (healthBar.enabled == true){
+                healthBar.enabled = false;
+            }
+
+        }
         if (isDead == true)
         {
-            _SlimeAni.SetTrigger("isDie");
-           
             if (respawnTimer > 0)
             {
                 respawnTimer -= Time.deltaTime;

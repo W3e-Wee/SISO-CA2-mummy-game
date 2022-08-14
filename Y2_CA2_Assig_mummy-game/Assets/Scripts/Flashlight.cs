@@ -37,27 +37,19 @@ public class Flashlight : MonoBehaviour
                 // if raycast hit something
                 // Debug.Log(hit.transform.tag); // Get name of collided target
                 if (hit.transform.tag == "slime") {
-                    ParticleSystem ps = hit.transform.gameObject.GetComponent<SlimeJelly>().deathParticles;
+                    // ParticleSystem ps = hit.transform.gameObject.GetComponent<SlimeJelly>().deathParticles;
 
-                    Image _HealthBar = hit.transform.gameObject.GetComponent<SlimeJelly>().healthBar;
-                    if (_HealthBar.enabled == false) {
-                        _HealthBar.enabled = true;
-                    }
-                    var dmg = ps.emission;
+                    // var dmg = ps.emission;
 
                     var currentSlime = hit.transform.gameObject;
                     
                     // var _emission = ps.emission;
                     if (hit.transform.GetComponent<SlimeJelly>().health > 0) {
                         hit.transform.GetComponent<SlimeJelly>().health -= 1;
-                        dmg.enabled = true;
+                        // dmg.enabled = true;
                     }
                     if (hit.transform.gameObject.GetComponent<SlimeJelly>().health == 0) {
-                        hit.transform.gameObject.GetComponent<SlimeJelly>().isDead = true;
-                        dmg.enabled = false;
-                        if (_HealthBar.enabled == true) {
-                            _HealthBar.enabled = false;
-                        }
+                        // dmg.enabled = false;
                     }
                 }
                 if (hit.transform.tag == "mummy") {

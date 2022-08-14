@@ -13,6 +13,10 @@ public class mummyPathing : MonoBehaviour
     public Transform test;
     public bool callTest = false; 
 
+    public AudioSource chaseSound;
+    public AudioSource attackSound;
+    public AudioSource stunSound;
+
     public enum STATE
     {
         idle,
@@ -35,6 +39,8 @@ public class mummyPathing : MonoBehaviour
     public float playerDistance;
     public int randomNumber;
 
+    private bool ChaseAudioPlayed = false;
+    private bool inChase = false;
 
     void Start()
     {
@@ -44,25 +50,46 @@ public class mummyPathing : MonoBehaviour
         _ani = GetComponent<Animator>();
         _nav = GetComponent<UnityEngine.AI.NavMeshAgent>();
 
-
+        chaseSound = this.transform.GetChild(0).GetComponent<AudioSource>();
+        attackSound = this.transform.GetChild(1).GetComponent<AudioSource>();
+        stunSound = this.transform.GetChild(2).GetComponent<AudioSource>();
         return;
     }
 
     public void DamageEvent()
     {
+        attackSound.Play();
         PlayerHP.Damage(attack_damage);
     }
+
+            
+        public void stun()
+        {
+            stunSound.Play();
+        }
 
 
 
     void Update()
     {
+        if (inChase == true && ChaseAudioPlayed == true){
+            Debug.Log("Chase sound playing");
+            chaseSound.Play();
+            ChaseAudioPlayed = false;
+        }
+        else if (inChase == false && ChaseAudioPlayed == true)
+        {
+            chaseSound.Stop();
+            ChaseAudioPlayed = false;
+        }
 
         Vector3 _dir = Target.position - transform.position;
         playerDistance = Vector3.Distance(transform.position, Target.position);
         Debug.DrawRay(transform.position, _dir, Color.red);
         if (_state == STATE.idle)
         {   
+            inChase = false;
+            ChaseAudioPlayed = true;
             idleTimer -= Time.deltaTime;
             if (idleTimer <= 0)
             {
@@ -78,6 +105,7 @@ public class mummyPathing : MonoBehaviour
                 {
                     if (_hit.transform == Target)
                     {
+                        inChase = true;
                         _state = STATE.chasing;
                     }
                 }
@@ -87,6 +115,7 @@ public class mummyPathing : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, Target.position) < notice_range)
             {
+                inChase = true;
                 _state = STATE.chasing;
             }
             // Debug.Log(Vector3.Distance(this.transform.position, slimes[randomNumber].transform.position));
@@ -101,6 +130,7 @@ public class mummyPathing : MonoBehaviour
         }
         else if (_state == STATE.chasing)
         {
+            
             // Debug.Log("chasing " + Vector3.Distance(transform.position, Target.position));
             if (Vector3.Distance(transform.position, Target.position) < notice_range)
             {
@@ -114,6 +144,7 @@ public class mummyPathing : MonoBehaviour
             }
             else
             {
+                chaseSound.Stop();
                 _state = STATE.idle;
             }
         }
@@ -133,12 +164,14 @@ public class mummyPathing : MonoBehaviour
                     Debug.Log(_hit.transform.name);
                     if (_hit.transform == Target)
                     {
+                        inChase = true;
                         _state = STATE.chasing;
                     }
                 }
             }
             else if (Vector3.Distance(this.transform.position, test.position) < 2f)
             {
+                inChase = false;
                 _state = STATE.idle;
             }
         }
@@ -159,19 +192,21 @@ public class mummyPathing : MonoBehaviour
 			if(Vector3.Distance(transform.position, Target.position) > attack_range)
 			{
 				// target is outside, change back to chase state
+                inChase = true;
 				_state = STATE.chasing;
                 _nav.isStopped = false;
 			}
 		}
         else if(_state == STATE.stunned) {
+            inChase = false;
             _nav.isStopped = true;
             _ani.SetTrigger("isStunned");
-            stunTimer -= Time.deltaTime;
             if (stunTimer <= 0)
             {
-                _ani.SetTrigger("isStunned");
                 _state = STATE.idle;
                 stunTimer = 5f;
+            } else {
+                stunTimer -= Time.deltaTime;
             }
         }
 
